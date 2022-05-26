@@ -3,12 +3,13 @@
 #include "esp_log.h"
 #include "string.h"
 
+// Default configuration while becoming an access point
 #define SSID "Water Solution"
-#define PASSWORD ""
 #define WIFI_CHANNEL 1
 #define WIFI_MAX_CONNECTIONS 4
 
-static const char *TAG = "CONFIG_SERVER";
+// Tag used during logging
+static const char *TAG = "CONFIG_SERVER::WIFI_HELPERS";
 
 // Event handler for WiFi events
 void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
@@ -49,19 +50,15 @@ void wifi_init_apsta()
         .ssid = SSID,
         .ssid_len = strlen(SSID),
         .channel = WIFI_CHANNEL,
-        .password = PASSWORD,
+        .password = "",
         .max_connection = WIFI_MAX_CONNECTIONS,
-        .authmode = WIFI_AUTH_WPA_WPA2_PSK,
+        .authmode = WIFI_AUTH_OPEN,
     };
     wifi_config_t wifi_config = {.ap = ap_config};
-    if (strlen(PASSWORD) == 0)
-        wifi_config.ap.authmode = WIFI_AUTH_OPEN;
 
     // Start the WiFi
     ESP_LOGI(TAG, "Initializing wifi:");
     ESP_LOGI(TAG, "\tSSID=%s", SSID);
-    ESP_LOGI(TAG, "\tPassword=%s", PASSWORD);
-    ESP_LOGI(TAG, "\tChannel=%u", WIFI_CHANNEL);
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());

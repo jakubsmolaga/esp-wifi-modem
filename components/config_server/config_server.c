@@ -7,13 +7,21 @@
 #include "wifi_helpers.h"
 #include "config_page.h"
 
+// Maximum number of access points shown after scanning
 #define MAX_SCAN_ACCESS_POINTS 10
 
+// Tag used during logging
 static const char *TAG = "CONFIG_SERVER";
 
+// This array holds all access points foudn during scanning
 static wifi_ap_record_t access_points[MAX_SCAN_ACCESS_POINTS];
 static uint8_t access_points_len;
 
+/* -------------------------------------------------------------------------- */
+/* --------------------------------- Helpers -------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+// Parse body of the form send request (Warning: this will modify the "body" array)
 void parse_connection_form(char *body, char *ssid, char *pass)
 {
     strtok(body, "&");

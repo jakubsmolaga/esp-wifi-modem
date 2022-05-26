@@ -1,20 +1,20 @@
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_system.h"
-#include "esp_wifi.h"
-#include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 
 #include "config_server.h"
 
-static const char *TAG = "wifi softAP";
+// Tag used for logging
+static const char *TAG = "MAIN";
 
+// Just prints the credentials entered by the user
 void got_wifi_configuration(const char *ssid, const char *password)
 {
     ESP_LOGI(TAG, "Got SSID=%s, PASSWORD=%s", ssid, password);
 }
+
+/* -------------------------------------------------------------------------- */
+/* ---------------------------------- Main ---------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 void app_main(void)
 {
@@ -27,5 +27,6 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
+    // Runs the config server
     config_server_run(got_wifi_configuration);
 }
