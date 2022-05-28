@@ -4,11 +4,7 @@
 #include "esp_log.h"
 #include "esp_http_server.h"
 
-#include "wifi_helpers.hpp"
 #include "config_page.hpp"
-
-// Maximum number of access points shown after scanning
-#define MAX_SCAN_ACCESS_POINTS 10
 
 namespace
 {
@@ -18,8 +14,8 @@ namespace
     static const char *TAG = "CONFIG_SERVER";
 
     // This array holds all access points foudn during scanning
-    static wifi_ap_record_t access_points[MAX_SCAN_ACCESS_POINTS];
-    static uint8_t access_points_len;
+    wifi_ap_record_t *access_points;
+    uint8_t access_points_len;
 
     /* -------------------------------------------------------------------------- */
     /* --------------------------------- Helpers -------------------------------- */
@@ -103,13 +99,11 @@ namespace
 
 namespace config_server
 {
-    void run(CallbackFunction cb)
+    auto run(CallbackFunction cb, wifi_ap_record_t *ap_list, uint16_t ap_count) -> void
     {
-        // Initialize the WiFi
-        wifi_helpers::wifi_init_apsta();
-
         // Get a list of available access points
-        access_points_len = wifi_helpers::wifi_scan(access_points, MAX_SCAN_ACCESS_POINTS);
+        access_points = ap_list;
+        access_points_len = ap_count;
 
         // Start the server
         start_webserver(cb);
