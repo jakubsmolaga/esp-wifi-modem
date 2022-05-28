@@ -1,7 +1,7 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
-#include "config_server.h"
+#include "config_server.hpp"
 
 // Tag used for logging
 static const char *TAG = "MAIN";
@@ -16,7 +16,7 @@ void got_wifi_configuration(const char *ssid, const char *password)
 /* ---------------------------------- Main ---------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-void app_main(void)
+extern "C" void app_main(void)
 {
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -28,5 +28,5 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     // Runs the config server
-    config_server_run(got_wifi_configuration);
+    config_server::run(got_wifi_configuration);
 }
