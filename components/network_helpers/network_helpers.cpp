@@ -13,8 +13,9 @@
 
 namespace
 {
-    constexpr auto TAG = "NETWORK_HELPERS";
+    using namespace network_helpers;
 
+    constexpr auto TAG = "NETWORK_HELPERS";
     static EventGroupHandle_t s_wifi_event_group;
     static int s_retry_num = 0;
 
@@ -107,7 +108,8 @@ namespace network_helpers
         ESP_ERROR_CHECK(esp_wifi_start());
     }
 
-    auto init_wifi_as_sta(const char *ssid, const char *pass) -> void
+    // Initialize WiFi as a station
+    auto init_wifi_as_sta(const char *ssid, const char *pass) -> esp_err_t
     {
         s_wifi_event_group = xEventGroupCreate();
         esp_netif_create_default_wifi_sta();
@@ -149,18 +151,9 @@ namespace network_helpers
 
         /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
          * happened. */
-        if (bits & WIFI_CONNECTED_BIT)
-        {
-            ESP_LOGI(TAG, "connected to ap SSID:%s password:%s", ssid, pass);
-        }
-        else if (bits & WIFI_FAIL_BIT)
-        {
-            ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s", ssid, pass);
-        }
-        else
-        {
-            ESP_LOGE(TAG, "UNEXPECTED EVENT");
-        }
+        if (!(bits & WIFI_CONNECTED_BIT))
+            return ESP_FAIL;
+        return ESP_OK;
     }
 
     // Scan for WiFi networks
