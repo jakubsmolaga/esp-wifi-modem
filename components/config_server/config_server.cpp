@@ -63,14 +63,20 @@ namespace
 
         return ESP_OK;
     }
+}
 
+namespace config_server
+{
     /* -------------------------------------------------------------------------- */
-    /* ----------------------------- Setup functions ---------------------------- */
+    /* ----------------------------------- Run ---------------------------------- */
     /* -------------------------------------------------------------------------- */
 
-    // Start the webservers
-    void start_webserver(CallbackFunction cb)
+    auto run(CallbackFunction cb, wifi_ap_record_t *ap_list, uint16_t ap_count) -> void
     {
+        // Get a list of available access points
+        access_points = ap_list;
+        access_points_len = ap_count;
+
         // Initialize the variables
         httpd_handle_t server = NULL;
         httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -94,18 +100,5 @@ namespace
         connect_handler_config.handler = connect_post_handler;
         connect_handler_config.user_ctx = (void *)cb;
         httpd_register_uri_handler(server, &connect_handler_config);
-    }
-}
-
-namespace config_server
-{
-    auto run(CallbackFunction cb, wifi_ap_record_t *ap_list, uint16_t ap_count) -> void
-    {
-        // Get a list of available access points
-        access_points = ap_list;
-        access_points_len = ap_count;
-
-        // Start the server
-        start_webserver(cb);
     }
 }
